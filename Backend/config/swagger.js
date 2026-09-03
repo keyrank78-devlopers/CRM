@@ -11,6 +11,10 @@ const options = {
         },
         servers: [
             {
+                url: process.env.VITE_API_URL || "https://crm-82ep.onrender.com",
+                description: "Live Server"
+            },
+            {
                 url: "http://localhost:5000",
                 description: "Local Server"
             }
