@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // Controllers
-const { createEmployee, getEmployees, createVendor } = require("../controllers/admin.controller");
+const { createEmployee, getEmployees, getEmployeeById, updateEmployee, changeEmployeeStatus, createVendor } = require("../controllers/admin.controller");
 const {
     createDepartment,
     getDepartments,
@@ -126,6 +126,99 @@ router.post("/employees/create", registerValidator, validate, createEmployee);
  *         description: List of employees
  */
 router.get("/employees/list", getEmployees);
+
+/**
+ * @swagger
+ * /api/v1/admin/employees/details/{id}:
+ *   get:
+ *     summary: Get Employee Details by ID
+ *     tags: [Admin - Employees]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Employee details
+ */
+router.get("/employees/details/:id", getEmployeeById);
+
+/**
+ * @swagger
+ * /api/v1/admin/employees/update/{id}:
+ *   patch:
+ *     summary: Update an Employee
+ *     tags: [Admin - Employees]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: object
+ *               role:
+ *                 type: string
+ *               department:
+ *                 type: string
+ *               designation:
+ *                 type: string
+ *               permissions:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Employee updated
+ */
+router.patch("/employees/update/:id", updateEmployee);
+
+/**
+ * @swagger
+ * /api/v1/admin/employees/status/{id}:
+ *   patch:
+ *     summary: Change Employee Status (Soft Delete)
+ *     tags: [Admin - Employees]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [ACTIVE, INACTIVE]
+ *     responses:
+ *       200:
+ *         description: Status changed
+ */
+router.patch("/employees/status/:id", changeEmployeeStatus);
 
 // --- Vendor Routes ---
 /**
@@ -483,8 +576,28 @@ router.patch("/designations/update/:id", updateDesignation);
 router.patch("/designations/status/:id", changeDesignationStatus);
 
 // --- Category Routes ---
-const { createCategory, updateCategory, changeCategoryStatus } = require("../controllers/category.controller");
+const { createCategory, getCategoryById, updateCategory, changeCategoryStatus } = require("../controllers/category.controller");
 const upload = require("../config/cloudinary");
+
+/**
+ * @swagger
+ * /api/v1/admin/categories/details/{id}:
+ *   get:
+ *     summary: Get Category Details by ID
+ *     tags: [Admin - Categories]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category details
+ */
+router.get("/categories/details/:id", getCategoryById);
 
 /**
  * @swagger
@@ -577,7 +690,27 @@ router.patch("/categories/status/:id", changeCategoryStatus);
 
 
 // --- SubCategory Routes ---
-const { createSubCategory, updateSubCategory, changeSubCategoryStatus } = require("../controllers/subcategory.controller");
+const { createSubCategory, getSubCategoryById, updateSubCategory, changeSubCategoryStatus } = require("../controllers/subcategory.controller");
+
+/**
+ * @swagger
+ * /api/v1/admin/subcategories/details/{id}:
+ *   get:
+ *     summary: Get SubCategory Details by ID
+ *     tags: [Admin - Categories]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: SubCategory details
+ */
+router.get("/subcategories/details/:id", getSubCategoryById);
 
 /**
  * @swagger
@@ -731,11 +864,11 @@ const { createProduct, updateProduct, changeProductStatus } = require("../contro
  *         description: Product created successfully
  */
 router.post(
-    "/products/create", 
+    "/products/create",
     upload.fields([
         { name: "mainImage", maxCount: 1 },
         { name: "otherImages", maxCount: 5 }
-    ]), 
+    ]),
     createProduct
 );
 
@@ -793,11 +926,11 @@ router.post(
  *         description: Product updated
  */
 router.patch(
-    "/products/update/:id", 
+    "/products/update/:id",
     upload.fields([
         { name: "mainImage", maxCount: 1 },
         { name: "otherImages", maxCount: 5 }
-    ]), 
+    ]),
     updateProduct
 );
 

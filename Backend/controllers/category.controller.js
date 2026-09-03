@@ -123,9 +123,25 @@ const changeCategoryStatus = async (req, res, next) => {
     }
 };
 
+// @desc    Get Category Details by ID
+// @route   GET /api/v1/admin/categories/details/:id
+// @access  Private/Admin
+const getCategoryById = async (req, res, next) => {
+    try {
+        const category = await Category.findById(req.params.id);
+        if (!category) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+        res.status(200).json({ success: true, data: category });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createCategory,
     getCategories,
+    getCategoryById,
     updateCategory,
     changeCategoryStatus
 };

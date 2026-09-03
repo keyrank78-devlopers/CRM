@@ -157,9 +157,25 @@ const changeSubCategoryStatus = async (req, res, next) => {
     }
 };
 
+// @desc    Get SubCategory Details by ID
+// @route   GET /api/v1/admin/subcategories/details/:id
+// @access  Private/Admin
+const getSubCategoryById = async (req, res, next) => {
+    try {
+        const subcategory = await SubCategory.findById(req.params.id).populate("category", "name");
+        if (!subcategory) {
+            return res.status(404).json({ success: false, message: "SubCategory not found" });
+        }
+        res.status(200).json({ success: true, data: subcategory });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createSubCategory,
     getSubCategories,
+    getSubCategoryById,
     updateSubCategory,
     changeSubCategoryStatus
 };

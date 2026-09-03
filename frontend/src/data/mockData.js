@@ -13,6 +13,8 @@ import {
   FileBarChart,
   Bell,
   Settings,
+  Building,
+  Briefcase,
 } from "lucide-react";
 
 export const navigationData = [
@@ -20,6 +22,13 @@ export const navigationData = [
     group: "Dashboard",
     items: [
       { name: "Overview", href: "/dashboard", icon: LayoutDashboard, allowedRoles: ["ADMIN", "EMPLOYEE", "VENDOR"] },
+    ],
+  },
+  {
+    group: "Organization",
+    items: [
+      { name: "Departments", href: "/dashboard/departments", icon: Building, allowedRoles: ["ADMIN"] },
+      { name: "Designations", href: "/dashboard/designations", icon: Briefcase, allowedRoles: ["ADMIN"] },
     ],
   },
   {
@@ -31,11 +40,17 @@ export const navigationData = [
     ],
   },
   {
+    group: "Catalog",
+    items: [
+      { name: "Categories", href: "/dashboard/categories", icon: Tags, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_CATEGORIES"] },
+      { name: "SubCategories", href: "/dashboard/subcategories", icon: Boxes, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_SUBCATEGORIES"] },
+    ],
+  },
+  {
     group: "Business",
     items: [
       { name: "Products", href: "/dashboard/products", icon: Package, allowedRoles: ["ADMIN", "EMPLOYEE", "VENDOR"], permissionsNeeded: ["VIEW_PRODUCTS"] },
-      { name: "Categories", href: "/dashboard/categories", icon: Tags, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_CATEGORIES"] },
-      { name: "Inventory", href: "/dashboard/inventory", icon: Boxes, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_INVENTORY"] },
+      { name: "Inventory", href: "/dashboard/inventory", icon: Warehouse, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_INVENTORY"] },
     ],
   },
 ];

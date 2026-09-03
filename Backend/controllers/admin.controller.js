@@ -10,9 +10,9 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // Safe pagination parser — guards against NaN, negative, and absurdly large values
 const parsePagination = (page, limit) => {
-    const pageNum  = Math.max(parseInt(page,  10) || 1,  1);
+    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
     const limitNum = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 100); // cap at 100
-    const skip     = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;
     return { pageNum, limitNum, skip };
 };
 
@@ -70,7 +70,7 @@ const createEmployee = async (req, res, next) => {
             userType: "EMPLOYEE",
             employeeId,
             role,
-            department:  dept._id,
+            department: dept._id,
             designation: desig._id,
             permissions,
         });
@@ -79,10 +79,10 @@ const createEmployee = async (req, res, next) => {
             success: true,
             message: "Employee created successfully",
             data: {
-                id:          newEmployee._id,
-                employeeId:  newEmployee.employeeId,
-                name:        newEmployee.name,
-                email:       newEmployee.email,
+                id: newEmployee._id,
+                employeeId: newEmployee.employeeId,
+                name: newEmployee.name,
+                email: newEmployee.email,
             },
         });
     } catch (error) {
@@ -128,7 +128,7 @@ const getEmployees = async (req, res, next) => {
         if (search) {
             const safeSearch = escapeRegex(search);
             filter.$or = [
-                { name:  { $regex: safeSearch, $options: "i" } },
+                { name: { $regex: safeSearch, $options: "i" } },
                 { email: { $regex: safeSearch, $options: "i" } },
                 { phone: { $regex: safeSearch, $options: "i" } },
             ];
@@ -138,7 +138,7 @@ const getEmployees = async (req, res, next) => {
             User.countDocuments(filter),
             User.find(filter)
                 .select("-password -refreshToken")
-                .populate("department",  "name")
+                .populate("department", "name")
                 .populate("designation", "name")
                 .skip(skip)
                 .limit(limitNum)
@@ -151,10 +151,103 @@ const getEmployees = async (req, res, next) => {
             data: employees,
             pagination: {
                 total,
-                page:  pageNum,
+                page: pageNum,
                 pages: Math.ceil(total / limitNum),
                 limit: limitNum,
             },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get Employee Details by ID
+// @route   GET /api/v1/admin/employees/details/:id
+// @access  Private/Admin
+const getEmployeeById = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ success: false, message: "Invalid employee ID format" });
+        }
+
+        const employee = await User.findOne({ _id: req.params.id, userType: "EMPLOYEE" })
+            .select("-password -refreshToken")
+            .populate("department", "name")
+            .populate("designation", "name");
+
+        if (!employee) {
+            return res.status(404).json({ success: false, message: "Employee not found" });
+        }
+
+        res.status(200).json({ success: true, data: employee });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update Employee
+// @route   PATCH /api/v1/admin/employees/update/:id
+// @access  Private/Admin
+const updateEmployee = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, phone, address, role, department, designation, permissions } = req.body;
+
+        const employee = await User.findById(id);
+        if (!employee || employee.userType !== "EMPLOYEE") {
+            return res.status(404).json({ success: false, message: "Employee not found" });
+        }
+
+        if (department && !mongoose.Types.ObjectId.isValid(department)) {
+            return res.status(400).json({ success: false, message: "Invalid department ID" });
+        }
+        if (designation && !mongoose.Types.ObjectId.isValid(designation)) {
+            return res.status(400).json({ success: false, message: "Invalid designation ID" });
+        }
+
+        if (name) employee.name = name;
+        if (phone) employee.phone = phone;
+        if (address) employee.address = address;
+        if (role) employee.role = role;
+        if (department) employee.department = department;
+        if (designation) employee.designation = designation;
+        if (permissions) employee.permissions = permissions;
+
+        await employee.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Employee updated successfully",
+            data: employee
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Change Employee Status (Soft Delete)
+// @route   PATCH /api/v1/admin/employees/status/:id
+// @access  Private/Admin
+const changeEmployeeStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!["ACTIVE", "INACTIVE"].includes(status)) {
+            return res.status(400).json({ success: false, message: "Invalid status" });
+        }
+
+        const employee = await User.findById(id);
+        if (!employee || employee.userType !== "EMPLOYEE") {
+            return res.status(404).json({ success: false, message: "Employee not found" });
+        }
+
+        employee.status = status;
+        await employee.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Employee status updated successfully"
         });
     } catch (error) {
         next(error);
@@ -185,10 +278,10 @@ const createVendor = async (req, res, next) => {
             success: true,
             message: "Vendor created successfully",
             data: {
-                id:       newVendor._id,
+                id: newVendor._id,
                 vendorId: newVendor.vendorId,
-                name:     newVendor.name,
-                email:    newVendor.email,
+                name: newVendor.name,
+                email: newVendor.email,
             },
         });
     } catch (error) {
@@ -196,4 +289,4 @@ const createVendor = async (req, res, next) => {
     }
 };
 
-module.exports = { createEmployee, getEmployees, createVendor };
+module.exports = { createEmployee, getEmployees, getEmployeeById, updateEmployee, changeEmployeeStatus, createVendor };
