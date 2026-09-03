@@ -80,29 +80,6 @@ Start the Vite development server:
 npm run dev
 ```
 
-## 🔐 Environment Variables
-
-### Backend (`Backend/.env`)
-```env
-PORT=5000
-NODE_ENV=development
-MONGOURL=mongodb+srv://<user>:<password>@cluster.mongodb.net/
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
-
-# JWT Configuration
-JWT_ACCESS_SECRET=your_access_secret_key
-JWT_REFRESH_SECRET=your_refresh_secret_key
-ACCESS_TOKEN_EXPIRY=15m
-REFRESH_TOKEN_EXPIRY=7d
-
-# Initial Admin Creation Secret
-ADMIN_CREATION_SECRET=your_admin_secret
-```
-
-### Frontend (`frontend/.env`)
-```env
-VITE_API_URL=http://localhost:5000/api/v1/
-```
 
 ## 🤝 Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
