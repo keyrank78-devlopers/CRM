@@ -1,5 +1,4 @@
-import { Bell, Search, Menu, LogOut, ChevronDown } from "lucide-react";
-import { Input } from "../ui/Input";
+import { Bell, Menu, LogOut, ChevronDown } from "lucide-react";
 import { Button } from "../ui/Button";
 import { cn } from "../../utils/cn";
 import { useState, useRef, useEffect } from "react";
@@ -59,23 +58,7 @@ export function Header({ setMobileMenuOpen, isMobile }) {
       {/* Separator for mobile */}
       {isMobile && <div className="h-6 w-px bg-slate-200 lg:hidden" aria-hidden="true" />}
 
-      <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-        <form className="relative flex flex-1" action="#" method="GET">
-          <label htmlFor="search-field" className="sr-only">
-            Search
-          </label>
-          <Search
-            className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-slate-400 ml-3"
-            aria-hidden="true"
-          />
-          <Input
-            id="search-field"
-            className="block h-full w-full border-0 py-0 pl-10 pr-0 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm bg-transparent shadow-none"
-            placeholder="Search..."
-            type="search"
-            name="search"
-          />
-        </form>
+      <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6">
         <div className="flex items-center gap-x-4 lg:gap-x-6">
           <Button variant="ghost" size="icon" className="text-slate-500 rounded-full">
             <span className="sr-only">View notifications</span>

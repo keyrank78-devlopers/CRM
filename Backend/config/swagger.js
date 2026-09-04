@@ -7,7 +7,7 @@ const options = {
         info: {
             title: "CRM API Documentation",
             version: "1.0.0",
-            description: "API Documentation for CRM Backend (Auth, Admin, Employees, Departments, Designations)"
+            description: "API Documentation for CRM Backend (Auth, Admin, Employees, Departments, Designations, Leads)"
         },
         servers: [
             {

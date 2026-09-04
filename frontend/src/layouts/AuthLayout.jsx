@@ -15,36 +15,36 @@ export const AuthLayout = ({ children }) => {
 
         {/* Logo area */}
         <div className="relative z-10 flex items-center space-x-3">
-          <div className="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-600/20">
+          <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/30">
             <LayoutDashboard size={28} className="text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight">Admin Portal</span>
+          <span className="text-2xl font-bold tracking-tight text-white">AK Techs</span>
         </div>
 
         {/* Main messaging */}
         <div className="relative z-10 max-w-md">
-          <h2 className="text-4xl font-bold tracking-tight mb-6 leading-tight">
-            Manage your business, customers, operations, and analytics from one powerful platform.
+          <h2 className="text-4xl font-extrabold tracking-tight mb-6 leading-tight text-white">
+            Empowering your business with smart lead management & real-time analytics.
           </h2>
-          <p className="text-indigo-200/80 text-lg leading-relaxed">
-            Experience the next generation of enterprise management. Streamlined workflows and real-time insights at your fingertips.
+          <p className="text-indigo-200/90 text-lg leading-relaxed font-normal">
+            Supercharge your team's productivity with AK Techs CRM. Effortlessly track leads, schedule follow-ups, and push orders on a unified platform.
           </p>
         </div>
         
         {/* Minimal Footer */}
-        <div className="relative z-10 text-sm text-indigo-300/60 font-medium">
-          &copy; {new Date().getFullYear()} Enterprise Inc. All rights reserved.
+        <div className="relative z-10 text-sm text-indigo-300/70 font-medium">
+          &copy; {new Date().getFullYear()} AK Techs. All rights reserved.
         </div>
       </div>
 
       {/* Right Panel - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 md:p-16 lg:p-24 relative bg-slate-50 lg:bg-white transition-colors duration-300">
         {/* Mobile Logo (Visible only on small screens) */}
-        <div className="absolute top-8 left-8 lg:hidden flex items-center space-x-2">
-          <div className="p-1.5 bg-indigo-600 rounded-md">
-            <LayoutDashboard size={20} className="text-white" />
+        <div className="absolute top-8 left-8 lg:hidden flex items-center space-x-2.5">
+          <div className="p-2 bg-indigo-600 rounded-lg">
+            <LayoutDashboard size={22} className="text-white" />
           </div>
-          <span className="text-lg font-bold text-slate-900 tracking-tight">Admin Portal</span>
+          <span className="text-xl font-bold text-slate-900 tracking-tight">AK Techs</span>
         </div>
         
         <div className="w-full max-w-[420px]">

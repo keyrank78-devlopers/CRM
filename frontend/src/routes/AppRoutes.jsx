@@ -13,6 +13,13 @@ import { ProductForm } from "../pages/business/ProductForm";
 import { ProductView } from "../pages/business/ProductView";
 import { Employees } from "../pages/management/Employees";
 import { EmployeeForm } from "../pages/management/EmployeeForm";
+import { Leads } from "../pages/management/Leads";
+import { LeadForm } from "../pages/management/LeadForm";
+import { LeadOrders } from "../pages/management/LeadOrders";
+import { PushOrderPage } from "../pages/management/PushOrderPage";
+import { FollowUps } from "../pages/management/FollowUps";
+import { LeadView } from "../pages/management/LeadView";
+import { Permissions } from "../pages/management/Permissions";
 import { useAuth } from "../context/AuthContext";
 
 const PrivateRoute = ({ children }) => {
@@ -59,14 +66,24 @@ export const AppRoutes = () => {
         <Route index element={<Dashboard />} />
 
         {/* Organization Routes */}
-        <Route path="departments" element={<RoleRoute allowedRoles={["ADMIN"]}><Departments /></RoleRoute>} />
-        <Route path="designations" element={<RoleRoute allowedRoles={["ADMIN"]}><Designations /></RoleRoute>} />
+        <Route path="departments" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE"]} permissionsNeeded={["MANAGE_DEPARTMENTS"]}><Departments /></RoleRoute>} />
+        <Route path="designations" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE"]} permissionsNeeded={["MANAGE_DESIGNATIONS"]}><Designations /></RoleRoute>} />
+        <Route path="permissions" element={<RoleRoute allowedRoles={["ADMIN"]} permissionsNeeded={["MANAGE_PERMISSIONS"]}><Permissions /></RoleRoute>} />
 
         {/* Management Routes */}
         <Route path="customers" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE"]} permissionsNeeded={["VIEW_CUSTOMERS"]}><div className="p-4">Customers Page Placeholder</div></RoleRoute>} />
         <Route path="employees" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE"]} permissionsNeeded={["VIEW_EMPLOYEES"]}><Employees /></RoleRoute>} />
         <Route path="employees/create" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE"]} permissionsNeeded={["VIEW_EMPLOYEES"]}><EmployeeForm /></RoleRoute>} />
         <Route path="employees/edit/:id" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE"]} permissionsNeeded={["VIEW_EMPLOYEES"]}><EmployeeForm /></RoleRoute>} />
+        
+        <Route path="leads" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["VIEW_LEADS"]}><Leads /></RoleRoute>} />
+        <Route path="leads/create" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["CREATE_LEADS"]}><LeadForm /></RoleRoute>} />
+        <Route path="leads/edit/:id" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["EDIT_LEADS"]}><LeadForm /></RoleRoute>} />
+        <Route path="leads/view/:id" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["VIEW_LEADS"]}><LeadView /></RoleRoute>} />
+        <Route path="leads/push-order/:leadId" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["CREATE_LEAD_ORDERS"]}><PushOrderPage /></RoleRoute>} />
+        <Route path="lead-orders" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["VIEW_LEAD_ORDERS"]}><LeadOrders /></RoleRoute>} />
+        <Route path="follow-ups" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"]} permissionsNeeded={["VIEW_FOLLOWUPS"]}><FollowUps /></RoleRoute>} />
+
         <Route path="orders" element={<RoleRoute allowedRoles={["ADMIN", "EMPLOYEE", "VENDOR"]} permissionsNeeded={["VIEW_ORDERS"]}><div className="p-4">Orders Page Placeholder</div></RoleRoute>} />
 
         {/* Catalog Routes */}

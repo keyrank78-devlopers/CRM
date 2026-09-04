@@ -30,7 +30,7 @@ export function Sidebar({ collapsed, setCollapsed }) {
       <div className="flex h-16 shrink-0 items-center justify-between px-4 border-b border-slate-200">
         {!collapsed && (
           <span className="text-lg font-bold text-slate-900 truncate">
-            Acme Inc.
+            AK Techs
           </span>
         )}
         <button

@@ -146,7 +146,7 @@ const changeSubCategoryStatus = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "Invalid status" });
         }
 
-        const subcategory = await SubCategory.findByIdAndUpdate(id, { status }, { new: true, runValidators: true });
+        const subcategory = await SubCategory.findByIdAndUpdate(id, { status }, { returnDocument: 'after', runValidators: true });
         if (!subcategory) {
             return res.status(404).json({ success: false, message: "SubCategory not found" });
         }

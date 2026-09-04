@@ -110,7 +110,10 @@ const getProducts = async (req, res, next) => {
         if (status) filter.status = status;
         
         if (search) {
-            filter.$text = { $search: search };
+            filter.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { productId: { $regex: search, $options: "i" } }
+            ];
         }
 
         // Handle category filter (ID or Name)
@@ -319,7 +322,7 @@ const changeProductStatus = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "Invalid status" });
         }
 
-        const product = await Product.findByIdAndUpdate(id, { status }, { new: true, runValidators: true });
+        const product = await Product.findByIdAndUpdate(id, { status }, { returnDocument: 'after', runValidators: true });
         if (!product) {
             return res.status(404).json({ success: false, message: "Product not found" });
         }

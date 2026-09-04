@@ -51,7 +51,7 @@ const authenticate = async (req, res, next) => {
         }
 
         // ── Fetch user and attach to request ─────────────────────────────────
-        const user = await User.findById(decoded.id).select("-password -refreshToken");
+        const user = await User.findById(decoded.id).select("-password -refreshToken").populate("designation");
 
         if (!user) {
             return res.status(401).json({
@@ -103,4 +103,31 @@ const authorize = (...roles) => {
     };
 };
 
-module.exports = { authenticate, authorize };
+const checkPermission = (...requiredPermissions) => {
+    return (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({ success: false, message: "Not authenticated" });
+        }
+
+        // Admin always has full bypass access
+        if (req.user.userType === "ADMIN") {
+            return next();
+        }
+
+        const userPermissions = req.user.permissions || [];
+        const hasPerm = requiredPermissions.some(perm => userPermissions.includes(perm));
+
+        if (!hasPerm) {
+            return res.status(403).json({
+                success: false,
+                message: "Forbidden — missing required permission",
+                code: "PERMISSION_DENIED"
+            });
+        }
+
+        next();
+    };
+};
+
+module.exports = { authenticate, authorize, checkPermission };
+

@@ -57,17 +57,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const hasRole = (roles) => {
-    if (!user || !user.userType) return false;
+    if (!user) return false;
     if (!roles || roles.length === 0) return true;
-    return roles.includes(user.userType);
+    return roles.includes(user.userType) || (user.role && roles.includes(user.role));
   };
 
   const hasPermission = (permissions) => {
     if (!user) return false;
+    if (user.userType === "ADMIN") return true; // Admins bypass permission checks
     if (!permissions || permissions.length === 0) return true;
-    if (user.userType === "ADMIN") return true; // Admins usually bypass permission checks
     if (!user.permissions) return false;
-    return permissions.some((p) => user.permissions.includes(p));
+    const permList = Array.isArray(permissions) ? permissions : [permissions];
+    return permList.some((p) => user.permissions.includes(p));
   };
 
   return (

@@ -6,8 +6,10 @@ import api from "../../services/api";
 import toast from "react-hot-toast";
 import { DesignationModal } from "../../components/organization/DesignationModal";
 import { cn } from "../../utils/cn";
+import { useAuth } from "../../context/AuthContext";
 
 export function Designations() {
+  const { hasPermission } = useAuth();
   const [designations, setDesignations] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,10 +83,12 @@ export function Designations() {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Designations</h1>
           <p className="text-sm text-slate-500 mt-1">Manage employee designations under departments.</p>
         </div>
-        <Button onClick={openCreateModal}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Designation
-        </Button>
+        {(hasPermission("MANAGE_DESIGNATIONS") || hasPermission("CREATE_DESIGNATIONS")) && (
+          <Button onClick={openCreateModal}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Designation
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
@@ -159,21 +163,25 @@ export function Designations() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => openEditModal(desig)} title="Edit">
-                          <Edit2 className="h-4 w-4 text-slate-500 hover:text-indigo-600" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleToggleStatus(desig._id, desig.status)}
-                          title={desig.status === "ACTIVE" ? "Deactivate" : "Activate"}
-                        >
-                          {desig.status === "ACTIVE" ? (
-                            <ShieldOff className="h-4 w-4 text-red-500 hover:text-red-700" />
-                          ) : (
-                            <Shield className="h-4 w-4 text-green-500 hover:text-green-700" />
-                          )}
-                        </Button>
+                        {(hasPermission("MANAGE_DESIGNATIONS") || hasPermission("EDIT_DESIGNATIONS")) && (
+                          <Button variant="ghost" size="icon" onClick={() => openEditModal(desig)} title="Edit">
+                            <Edit2 className="h-4 w-4 text-slate-500 hover:text-indigo-600" />
+                          </Button>
+                        )}
+                        {(hasPermission("MANAGE_DESIGNATIONS") || hasPermission("DELETE_DESIGNATIONS")) && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleToggleStatus(desig._id, desig.status)}
+                            title={desig.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                          >
+                            {desig.status === "ACTIVE" ? (
+                              <ShieldOff className="h-4 w-4 text-red-500 hover:text-red-700" />
+                            ) : (
+                              <Shield className="h-4 w-4 text-green-500 hover:text-green-700" />
+                            )}
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>

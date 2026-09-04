@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // Controllers
-const { createEmployee, getEmployees, getEmployeeById, updateEmployee, changeEmployeeStatus, createVendor } = require("../controllers/admin.controller");
+const { createEmployee, getEmployees, getEmployeeById, updateEmployee, changeEmployeeStatus, createVendor, updateUserPermissions } = require("../controllers/admin.controller");
 const {
     createDepartment,
     getDepartments,
@@ -18,6 +18,28 @@ const {
     updateDesignation,
     changeDesignationStatus
 } = require("../controllers/designation.controller");
+const {
+    createLead,
+    getLeads,
+    getLeadById,
+    updateLead,
+    assignLeads,
+    deleteLead
+} = require("../controllers/lead.controller");
+const {
+    createLeadOrder,
+    getLeadOrders,
+    getLeadOrderById,
+    updateLeadOrder,
+    deleteLeadOrder
+} = require("../controllers/leadOrder.controller");
+const {
+    createActivity,
+    getLeadActivities,
+    getFollowUps,
+    updateActivity,
+    deleteActivity
+} = require("../controllers/leadActivity.controller");
 
 // Middlewares & Validators
 const { registerValidator } = require("../validators/auth.validator");
@@ -31,8 +53,8 @@ const { authenticate, authorize } = require("../middlewares/auth.middleware");
  *   description: Admin management APIs
  */
 
-// All admin routes should be protected and only accessible by ADMIN
-router.use(authenticate, authorize("ADMIN"));
+// All admin routes should be protected for authenticated users with appropriate roles
+router.use(authenticate, authorize("ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"));
 
 // --- Employee Routes ---
 /**
@@ -219,6 +241,7 @@ router.patch("/employees/update/:id", updateEmployee);
  *         description: Status changed
  */
 router.patch("/employees/status/:id", changeEmployeeStatus);
+router.put("/users/:id/permissions", updateUserPermissions);
 
 // --- Vendor Routes ---
 /**
@@ -963,5 +986,168 @@ router.patch(
  *         description: Status changed
  */
 router.patch("/products/status/:id", changeProductStatus);
+
+// --- Lead Routes ---
+/**
+ * @swagger
+ * /api/v1/admin/leads:
+ *   post:
+ *     summary: Create a Lead
+ *     tags: [Admin - Leads]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               whatsappNumber:
+ *                 type: string
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   city:
+ *                     type: string
+ *                   state:
+ *                     type: string
+ *                   locality:
+ *                     type: string
+ *                   pincode:
+ *                     type: string
+ *                   landmark:
+ *                     type: string
+ *               status:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Lead created
+ */
+router.post("/leads", createLead);
+router.post("/leads/assign", assignLeads);
+
+/**
+ * @swagger
+ * /api/v1/admin/leads:
+ *   get:
+ *     summary: Get all Leads
+ *     tags: [Admin - Leads]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by name, email, or phone
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Filter by lead status
+ *     responses:
+ *       200:
+ *         description: List of leads with pagination details
+ */
+router.get("/leads", getLeads);
+
+/**
+ * @swagger
+ * /api/v1/admin/leads/{id}:
+ *   get:
+ *     summary: Get Lead by ID
+ *     tags: [Admin - Leads]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lead details
+ */
+router.get("/leads/:id", getLeadById);
+
+/**
+ * @swagger
+ * /api/v1/admin/leads/{id}:
+ *   put:
+ *     summary: Update Lead
+ *     tags: [Admin - Leads]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Lead updated
+ */
+router.put("/leads/:id", updateLead);
+
+/**
+ * @swagger
+ * /api/v1/admin/leads/{id}:
+ *   delete:
+ *     summary: Delete Lead
+ *     tags: [Admin - Leads]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lead deleted
+ */
+router.delete("/leads/:id", deleteLead);
+
+// --- Lead Order Routes ---
+router.post("/lead-orders", createLeadOrder);
+router.get("/lead-orders", getLeadOrders);
+router.get("/lead-orders/:id", getLeadOrderById);
+router.put("/lead-orders/:id", updateLeadOrder);
+router.delete("/lead-orders/:id", deleteLeadOrder);
+
+// --- Lead Activity & Follow-up Routes ---
+router.post("/lead-activities", createActivity);
+router.get("/lead-activities/lead/:leadId", getLeadActivities);
+router.get("/lead-activities/follow-ups", getFollowUps);
+router.put("/lead-activities/:id", updateActivity);
+router.delete("/lead-activities/:id", deleteActivity);
 
 module.exports = router;

@@ -15,25 +15,33 @@ import {
   Settings,
   Building,
   Briefcase,
+  UserPlus,
+  ShoppingBag,
+  Calendar,
+  ShieldCheck,
 } from "lucide-react";
 
 export const navigationData = [
   {
     group: "Dashboard",
     items: [
-      { name: "Overview", href: "/dashboard", icon: LayoutDashboard, allowedRoles: ["ADMIN", "EMPLOYEE", "VENDOR"] },
+      { name: "Overview", href: "/dashboard", icon: LayoutDashboard, allowedRoles: ["ADMIN", "EMPLOYEE", "VENDOR", "FIELD_EXECUTIVE"] },
     ],
   },
   {
     group: "Organization",
     items: [
-      { name: "Departments", href: "/dashboard/departments", icon: Building, allowedRoles: ["ADMIN"] },
-      { name: "Designations", href: "/dashboard/designations", icon: Briefcase, allowedRoles: ["ADMIN"] },
+      { name: "Departments", href: "/dashboard/departments", icon: Building, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["MANAGE_DEPARTMENTS"] },
+      { name: "Designations", href: "/dashboard/designations", icon: Briefcase, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["MANAGE_DESIGNATIONS"] },
+      { name: "Permissions", href: "/dashboard/permissions", icon: ShieldCheck, allowedRoles: ["ADMIN"], permissionsNeeded: ["MANAGE_PERMISSIONS"] },
     ],
   },
   {
     group: "Management",
     items: [
+      { name: "Leads", href: "/dashboard/leads", icon: UserPlus, allowedRoles: ["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"], permissionsNeeded: ["VIEW_LEADS"] },
+      { name: "Follow-ups", href: "/dashboard/follow-ups", icon: Calendar, allowedRoles: ["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"], permissionsNeeded: ["VIEW_FOLLOWUPS"] },
+      { name: "Lead Orders", href: "/dashboard/lead-orders", icon: ShoppingBag, allowedRoles: ["ADMIN", "EMPLOYEE", "FIELD_EXECUTIVE"], permissionsNeeded: ["VIEW_LEAD_ORDERS"] },
       { name: "Customers", href: "/dashboard/customers", icon: Users, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_CUSTOMERS"] },
       { name: "Employees", href: "/dashboard/employees", icon: Building2, allowedRoles: ["ADMIN", "EMPLOYEE"], permissionsNeeded: ["VIEW_EMPLOYEES"] },
       { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart, allowedRoles: ["ADMIN", "EMPLOYEE", "VENDOR"], permissionsNeeded: ["VIEW_ORDERS"] },

@@ -98,7 +98,12 @@ const getEmployees = async (req, res, next) => {
         const { department, designation, search, page = 1, limit = 10 } = req.query;
         const { pageNum, limitNum, skip } = parsePagination(page, limit);
 
-        let filter = { userType: "EMPLOYEE" };
+        let filter = {};
+        if (req.query.userType && req.query.userType !== "ALL") {
+            filter.userType = req.query.userType;
+        } else {
+            filter.userType = { $in: ["EMPLOYEE", "VENDOR"] };
+        }
 
         // Department filter — accept ObjectId or name string
         if (department) {
@@ -289,4 +294,39 @@ const createVendor = async (req, res, next) => {
     }
 };
 
-module.exports = { createEmployee, getEmployees, getEmployeeById, updateEmployee, changeEmployeeStatus, createVendor };
+// @desc    Update User Permissions
+// @route   PUT /api/v1/admin/users/:id/permissions
+// @access  Private/Admin
+const updateUserPermissions = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { permissions } = req.body;
+
+        if (!Array.isArray(permissions)) {
+            return res.status(400).json({ success: false, message: "Permissions must be an array of string keys" });
+        }
+
+        const userDoc = await User.findById(id);
+        if (!userDoc) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        userDoc.permissions = permissions;
+        await userDoc.save();
+
+        res.status(200).json({
+            success: true,
+            message: "User permissions updated successfully",
+            data: {
+                id: userDoc._id,
+                name: userDoc.name,
+                permissions: userDoc.permissions
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { createEmployee, getEmployees, getEmployeeById, updateEmployee, changeEmployeeStatus, createVendor, updateUserPermissions };
+

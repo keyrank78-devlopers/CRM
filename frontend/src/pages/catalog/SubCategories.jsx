@@ -6,8 +6,10 @@ import api from "../../services/api";
 import toast from "react-hot-toast";
 import { cn } from "../../utils/cn";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export function SubCategories() {
+  const { hasPermission } = useAuth();
   const [subcategories, setSubCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,10 +70,12 @@ export function SubCategories() {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">SubCategories</h1>
           <p className="text-sm text-slate-500 mt-1">Manage product subcategories for your catalog.</p>
         </div>
-        <Button onClick={() => navigate("/dashboard/subcategories/create")}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add SubCategory
-        </Button>
+        {(hasPermission("MANAGE_SUBCATEGORIES") || hasPermission("MANAGE_CATEGORIES")) && (
+          <Button onClick={() => navigate("/dashboard/subcategories/create")}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add SubCategory
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
@@ -156,21 +160,25 @@ export function SubCategories() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => navigate(`/dashboard/subcategories/edit/${subcat._id}`)} title="Edit">
-                          <Edit2 className="h-4 w-4 text-slate-500 hover:text-indigo-600" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleToggleStatus(subcat._id, subcat.status || "ACTIVE")}
-                          title={subcat.status === "ACTIVE" || !subcat.status ? "Deactivate" : "Activate"}
-                        >
-                          {subcat.status === "ACTIVE" || !subcat.status ? (
-                            <ShieldOff className="h-4 w-4 text-red-500 hover:text-red-700" />
-                          ) : (
-                            <Shield className="h-4 w-4 text-green-500 hover:text-green-700" />
-                          )}
-                        </Button>
+                        {(hasPermission("MANAGE_SUBCATEGORIES") || hasPermission("MANAGE_CATEGORIES")) && (
+                          <>
+                            <Button variant="ghost" size="icon" onClick={() => navigate(`/dashboard/subcategories/edit/${subcat._id}`)} title="Edit">
+                              <Edit2 className="h-4 w-4 text-slate-500 hover:text-indigo-600" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => handleToggleStatus(subcat._id, subcat.status || "ACTIVE")}
+                              title={subcat.status === "ACTIVE" || !subcat.status ? "Deactivate" : "Activate"}
+                            >
+                              {subcat.status === "ACTIVE" || !subcat.status ? (
+                                <ShieldOff className="h-4 w-4 text-red-500 hover:text-red-700" />
+                              ) : (
+                                <Shield className="h-4 w-4 text-green-500 hover:text-green-700" />
+                              )}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
